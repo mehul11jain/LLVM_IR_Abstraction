@@ -71,15 +71,14 @@ struct InstructionPass : public FunctionPass {
 			Return_IR_Stmt *s = new Return_IR_Stmt(I.getOperand(0));
 			New_IR_list.push_back(s);
 		}
-		else 
-      	{
-			  	const CallInst *fnn = dyn_cast<CallInst>(&I);
+		else if(const CallInst *fnn = dyn_cast<CallInst>(&I))
+      	{			  	
 			  	std::list<llvm::Value*> arg2;
 			  	Function* fn = fnn->getCalledFunction();
                 StringRef fn_name = fn->getName();
                 for(auto arg = fn->arg_begin(); arg != fn->arg_end(); ++arg) 
-                    arg2.push_back(*arg);
-				Call_IR_Stmt *s= new Call_IR_Stmt(arg2, dyn_cast<Value>(&I));
+                    arg2.push_back(dyn_cast<Value>(&*arg));
+				Call_IR_Stmt *s= new Call_IR_Stmt(arg2,fn,dyn_cast<Value>(&I));
 				New_IR_list.push_back(s);
 		}
     }
