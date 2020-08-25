@@ -13,18 +13,25 @@ IR_Op Arith_IR_Stmt::get_operator() { return opt; }
 llvm::Value *Arith_IR_Stmt::get_result() { return result; }
 std::string Arith_IR_Stmt::get_IR_Stmt() {
 	std::string op1,op2;	
-	if(opd1->getName()==""){
-		llvm::Constant* newop = llvm::dyn_cast<llvm::Constant>(llvm::dyn_cast<llvm::User>(opd1));
-		op1 = newop->getUniqueInteger().toString(10,1);
-		}
+
+	if(llvm::ConstantFP* newop = llvm::dyn_cast<llvm::ConstantFP>(opd1)){
+		op1 = std::to_string(newop->getValueAPF().convertToFloat());
+	}
+	else if(llvm::ConstantInt* newop = llvm::dyn_cast<llvm::ConstantInt>(opd1)){
+		op1 = newop->getValue().toString(10,1);
+	}
 	else
 		op1 = opd1->getName().str();
-    if(opd2->getName()==""){
-		llvm::Constant* newop = llvm::dyn_cast<llvm::Constant>(llvm::dyn_cast<llvm::User>(opd2));
-		op2 = newop->getUniqueInteger().toString(10,1);
-		}
+
+    if(llvm::ConstantFP* newop = llvm::dyn_cast<llvm::ConstantFP>(opd2)){
+		op2 = std::to_string(newop->getValueAPF().convertToFloat());
+	}
+	else if(llvm::ConstantInt* newop = llvm::dyn_cast<llvm::ConstantInt>(opd2)){
+		op2 = newop->getValue().toString(10,1);
+	}
 	else
-		op2 = opd1->getName().str();
+		op2 = opd2->getName().str();
+
 	std::string res = result->getName().str();
 	return res + " = " + op1 + operators_map[opt] + op2;
 }
