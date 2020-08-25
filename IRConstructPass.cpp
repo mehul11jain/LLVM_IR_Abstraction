@@ -16,9 +16,9 @@
 
 using namespace llvm;
 namespace {
-struct InstructionPass : public FunctionPass {
+struct IRConstructPass : public FunctionPass {
   static char ID;
-  InstructionPass() : FunctionPass(ID) {}
+  IRConstructPass() : FunctionPass(ID) {}
   bool runOnFunction(Function &F) override {
     std::list<IR_Stmt *> New_IR_list;
     for (BasicBlock &BB : F) {
@@ -93,12 +93,12 @@ struct InstructionPass : public FunctionPass {
 };
 } // namespace
 
-char InstructionPass::ID = 0;
-static RegisterPass<InstructionPass>
-    X("instruction", "Iterates over each instruction", false, false);
+char IRConstructPass::ID = 0;
+static RegisterPass<IRConstructPass>
+    X("AbstractIR", "Creates an abstraction for LLVM IR", false, false);
 
 static RegisterStandardPasses Y(PassManagerBuilder::EP_EarlyAsPossible,
                                 [](const PassManagerBuilder &Builder,
                                    legacy::PassManagerBase &PM) {
-                                  PM.add(new InstructionPass());
+                                  PM.add(new IRConstructPass());
                                 });
