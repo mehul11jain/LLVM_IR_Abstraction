@@ -3,6 +3,8 @@
 #include "../IR_Abstraction/Load_IR_Stmt.h"
 #include "../IR_Abstraction/Arith_IR_Stmt.h"
 #include "../IR_Abstraction/Logical_IR_Stmt.h"
+#include "../IR_Abstraction/Return_IR_Stmt.h"
+#include "../IR_Abstraction/Call_IR_Stmt.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/LegacyPassManager.h"
@@ -24,6 +26,7 @@ struct InstructionPass : public FunctionPass {
         if (isa<StoreInst>(I)) {
           Store_IR_Stmt *n = new Store_IR_Stmt(I.getOperand(1), I.getOperand(0));
           n->populate_users();
+		  //llvm::errs()<<"After PopulateUsers in InstructionPass \n";
           New_IR_list.push_back(n);
         }
 		else if(isa<LoadInst>(I)){
@@ -63,10 +66,27 @@ struct InstructionPass : public FunctionPass {
 				New_IR_list.push_back(n);
 			}			
 		}
-      
+		else if(dyn_cast<ReturnInst>(&I))
+		{
+			Return_IR_Stmt *s = new Return_IR_Stmt(I.getOperand(0));
+			New_IR_list.push_back(s);
+		}
+		else 
+      	{
+			  	const CallInst *fnn = dyn_cast<CallInst>(&I);
+			  	std::list<llvm::Value*> arg2;
+			  	Function* fn = fnn->getCalledFunction();
+                StringRef fn_name = fn->getName();
+                for(auto arg = fn->arg_begin(); arg != fn->arg_end(); ++arg) 
+                    arg2.push_back(*arg);
+				Call_IR_Stmt *s= new Call_IR_Stmt(arg2, dyn_cast<Value>(&I));
+				New_IR_list.push_back(s);
+		}
     }
     for (auto x : New_IR_list) {
+	 	//errs()<<"Before getting IR\n";
       errs() << x->get_IR_Stmt() << "\n";
+
     }
     return false;
   }

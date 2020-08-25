@@ -10,8 +10,11 @@ llvm::Value *Store_IR_Stmt::get_result() { return result; }
 std::string Store_IR_Stmt::get_IR_Stmt() {
 	std::string op1;	
 	if(opd1->getName()==""){
-		llvm::Constant* newop = llvm::dyn_cast<llvm::Constant>(llvm::dyn_cast<llvm::User>(opd1));
-		op1 = newop->getUniqueInteger().toString(10,1);
+		llvm::ConstantFP* newop = llvm::dyn_cast<llvm::ConstantFP>(opd1);
+		if(newop!=NULL)
+			op1 = std::to_string(newop->getValueAPF().convertToFloat());
+		else
+			op1 = "-1";
 		}
 	else
 		op1 = opd1->getName().str();
