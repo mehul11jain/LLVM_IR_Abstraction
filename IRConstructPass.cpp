@@ -68,7 +68,11 @@ struct IRConstructPass : public FunctionPass {
 		}
 		else if(dyn_cast<ReturnInst>(&I))
 		{
-			Return_IR_Stmt *s = new Return_IR_Stmt(I.getOperand(0));
+			Return_IR_Stmt *s;
+			if(I.getNumOperands()!=0)
+			s = new Return_IR_Stmt(I.getOperand(0));
+			else
+			s = new Return_IR_Stmt();
 			New_IR_list.push_back(s);
 		}
 		else if(const CallInst *fnn = dyn_cast<CallInst>(&I))
