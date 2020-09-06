@@ -31,7 +31,6 @@ std::string Arith_IR_Stmt::get_IR_Stmt() {
 	}
 	else
 		op2 = opd2->getName().str();
-
 	std::string res = result->getName().str();
 	return res + " = " + op1 + operators_map[opt] + op2;
 }
