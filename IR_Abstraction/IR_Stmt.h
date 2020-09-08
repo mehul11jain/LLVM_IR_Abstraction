@@ -11,6 +11,13 @@ typedef enum {
   or_inst,
   not_inst,
   no_op_inst,
+  icmp_eq_inst,  ///< equal
+  icmp_ne_inst,   ///< not equal
+  icmp_gt_inst, ///< signed greater than
+  icmp_ge_inst, ///< signed greater or equal
+  icmp_lt_inst, ///< signed less than
+  icmp_le_inst, ///< signed less or equal
+
 } IR_Op;
 class IR_Stmt {
   std::string IR_Stmt_string;
@@ -28,6 +35,12 @@ public:
     operators_map[or_inst] = " | ";
     operators_map[not_inst] = " ! ";
     operators_map[no_op_inst] = " ";
+    operators_map[icmp_eq_inst] = " == ";
+    operators_map[icmp_ne_inst] = " != ";
+    operators_map[icmp_gt_inst] = " > ";
+    operators_map[icmp_ge_inst] = " >= ";
+    operators_map[icmp_lt_inst] = " < ";
+    operators_map[icmp_le_inst] = " <= ";
   };
   ~IR_Stmt(){};
   virtual llvm::Value *get_opd1();
